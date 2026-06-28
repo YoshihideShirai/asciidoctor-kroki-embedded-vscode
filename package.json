@@ -1,0 +1,65 @@
+{
+  "name": "asciidoctor-kroki-embedded-vscode",
+  "displayName": "Asciidoctor Kroki Embedded Helper",
+  "description": "Registers asciidoctor-kroki-embedded with asciidoctor-vscode preview and export workflows.",
+  "version": "1.0.0",
+  "license": "MIT",
+  "publisher": "yoshihideshirai",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/YoshihideShirai/asciidoctor-kroki-embedded-vscode.git"
+  },
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onLanguage:asciidoc",
+    "onCommand:asciidoctorKrokiEmbedded.showPreview"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "asciidoc.asciidoctorExtensions": true,
+    "commands": [
+      {
+        "command": "asciidoctorKrokiEmbedded.showPreview",
+        "title": "Asciidoctor Kroki Embedded: Open Preview"
+      }
+    ],
+    "configuration": {
+      "title": "Asciidoctor Kroki Embedded",
+      "properties": {
+        "asciidoctorKrokiEmbedded.defaultFormat": {
+          "type": "string",
+          "default": "svg",
+          "description": "Default diagram format passed to asciidoctor-kroki-embedded."
+        },
+        "asciidoctorKrokiEmbedded.diagramNames": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "description": "Diagram block and macro names to register. Leave empty to use the package defaults."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "build": "npm run bundle",
+    "bundle": "esbuild src/extension.ts --bundle --platform=node --format=cjs --target=node20 --external:vscode --outfile=dist/extension.js --sourcemap",
+    "check": "tsc -p . --noEmit",
+    "vscode:prepublish": "npm run build"
+  },
+  "dependencies": {
+    "asciidoctor-kroki-embedded": "github:YoshihideShirai/asciidoctor-kroki-embedded"
+  },
+  "devDependencies": {
+    "@types/node": "^20.16.5",
+    "@types/vscode": "^1.90.0",
+    "esbuild": "^0.28.1",
+    "typescript": "^5.6.2"
+  }
+}
