@@ -22,6 +22,7 @@ interface AsciidoctorVscodeApi {
 
 interface KrokiEmbeddedModule {
   register?: (registry: any, options?: KrokiEmbeddedOptions) => any;
+  DEFAULT_DIAGRAM_NAMES?: string[];
   default?: {
     register?: (registry: any, options?: KrokiEmbeddedOptions) => any;
   };
@@ -29,16 +30,33 @@ interface KrokiEmbeddedModule {
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const krokiEmbedded = require('asciidoctor-kroki-embedded') as KrokiEmbeddedModule;
+const EXCLUDED_DIAGRAM_NAMES = new Set(['mermaid']);
+
+function getDefaultDiagramNames(): string[] {
+  if (!Array.isArray(krokiEmbedded.DEFAULT_DIAGRAM_NAMES)) {
+    return [];
+  }
+
+  return krokiEmbedded.DEFAULT_DIAGRAM_NAMES.filter((name) => !EXCLUDED_DIAGRAM_NAMES.has(name.toLowerCase()));
+}
+
+function normalizeDiagramNames(diagramNames: string[]): string[] {
+  const sourceDiagramNames = diagramNames.length > 0
+    ? diagramNames
+    : getDefaultDiagramNames();
+
+  return sourceDiagramNames
+    .map((name) => name.trim())
+    .filter((name) => name.length > 0 && !EXCLUDED_DIAGRAM_NAMES.has(name.toLowerCase()));
+}
 
 function getKrokiEmbeddedOptions(documentUri?: vscode.Uri): KrokiEmbeddedOptions {
   const cfg = vscode.workspace.getConfiguration('asciidoctorKrokiEmbedded', documentUri);
-  const diagramNames = cfg.get<string[]>('diagramNames', [])
-    .map((name) => name.trim())
-    .filter((name) => name.length > 0);
+  const diagramNames = normalizeDiagramNames(cfg.get<string[]>('diagramNames', []));
 
   return {
     defaultFormat: cfg.get<string>('defaultFormat', 'svg'),
-    ...(diagramNames.length > 0 ? { diagramNames } : {})
+    diagramNames
   };
 }
 

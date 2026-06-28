@@ -1,13 +1,6 @@
 = Kroki Embedded Sample
 :kroki-default-format: svg
 
-[mermaid]
-----
-graph TD
-  A[AsciiDoc] --> B[asciidoctor-kroki-embedded]
-  B --> C[VS Code Preview]
-----
-
 [plantuml]
 ----
 @startuml

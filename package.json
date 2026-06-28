@@ -22,6 +22,13 @@
   "main": "./dist/extension.js",
   "contributes": {
     "asciidoc.asciidoctorExtensions": true,
+    "asciidoc.previewStyles": [
+      "dist/kroki-embedded.css"
+    ],
+    "asciidoc.previewScripts": [
+      "dist/plantuml-viz-global.js",
+      "dist/preview.js"
+    ],
     "commands": [
       {
         "command": "asciidoctorKrokiEmbedded.showPreview",
@@ -42,19 +49,23 @@
             "type": "string"
           },
           "default": [],
-          "description": "Diagram block and macro names to register. Leave empty to use the package defaults."
+          "description": "Diagram block and macro names to register. Leave empty to use the package defaults except Mermaid. Mermaid is always excluded."
         }
       }
     }
   },
   "scripts": {
     "build": "npm run bundle",
-    "bundle": "esbuild src/extension.ts --bundle --platform=node --format=cjs --target=node20 --external:vscode --outfile=dist/extension.js --sourcemap",
+    "bundle": "npm run bundle:assets && npm run bundle:extension && npm run bundle:preview",
+    "bundle:assets": "mkdir -p dist && cp node_modules/@plantuml/core/viz-global.js dist/plantuml-viz-global.js && cp node_modules/asciidoctor-kroki-embedded/src/style.css dist/kroki-embedded.css",
+    "bundle:extension": "esbuild src/extension.ts --bundle --platform=node --format=cjs --target=node20 --external:vscode --outfile=dist/extension.js --sourcemap",
+    "bundle:preview": "esbuild src/preview.ts --bundle --platform=browser --format=iife --target=es2020 --outfile=dist/preview.js --sourcemap",
     "check": "tsc -p . --noEmit",
     "vscode:prepublish": "npm run build"
   },
   "dependencies": {
-    "asciidoctor-kroki-embedded": "github:YoshihideShirai/asciidoctor-kroki-embedded"
+    "@plantuml/core": "^1.2026.6",
+    "asciidoctor-kroki-embedded": "github:YoshihideShirai/asciidoctor-kroki-embedded#v0.3.0"
   },
   "devDependencies": {
     "@types/node": "^20.16.5",

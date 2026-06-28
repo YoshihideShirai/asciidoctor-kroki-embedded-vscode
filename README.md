@@ -8,8 +8,8 @@ It recognizes Kroki-compatible diagram blocks and block macros, then emits embed
 
 ## Features
 
-- Registers `asciidoctor-kroki-embedded` automatically for AsciiDoc preview and export.
-- Supports Kroki-style diagram blocks such as `[mermaid]`, `[plantuml]`, `[vega]`, `[wavedrom]`, `[graphviz]`, and many others handled by the package.
+- Registers `asciidoctor-kroki-embedded` automatically for AsciiDoc preview and export, excluding Mermaid diagrams.
+- Supports Kroki-style diagram blocks such as `[plantuml]`, `[vega]`, `[wavedrom]`, `[graphviz]`, and many others handled by the package.
 - Supports local diagram block macros such as `plantuml::diagrams/sequence.puml[]`.
 - Keeps remote diagram macro targets, absolute paths, and path traversal outside the document directory disabled by the underlying package.
 - Keeps your project clean by avoiding generated extension files in the workspace.
@@ -48,10 +48,11 @@ The same configuration is also used by supported `asciidoctor-vscode` preview an
 = Sample Document
 :kroki-default-format: svg
 
-[mermaid]
+[graphviz]
 ----
-graph TD
-  A[AsciiDoc] --> B[Embedded diagram target]
+digraph G {
+  AsciiDoc -> "Embedded diagram target"
+}
 ----
 
 plantuml::diagrams/sequence.puml[]
@@ -64,7 +65,7 @@ You can configure the extension from VS Code settings.
 | Setting | Default | Description |
 | --- | --- | --- |
 | `asciidoctorKrokiEmbedded.defaultFormat` | `svg` | Default diagram format passed to `asciidoctor-kroki-embedded`. |
-| `asciidoctorKrokiEmbedded.diagramNames` | `[]` | Diagram block and macro names to register. Leave empty to use the package defaults. |
+| `asciidoctorKrokiEmbedded.diagramNames` | `[]` | Diagram block and macro names to register. Leave empty to use the package defaults except Mermaid. Mermaid is always excluded. |
 
 ### Example `settings.json`
 
@@ -72,7 +73,6 @@ You can configure the extension from VS Code settings.
 {
   "asciidoctorKrokiEmbedded.defaultFormat": "svg",
   "asciidoctorKrokiEmbedded.diagramNames": [
-    "mermaid",
     "plantuml",
     "graphviz"
   ]
@@ -93,7 +93,7 @@ Make sure `asciidoctor-vscode` is installed and enabled.
 
 ### Diagram syntax is not recognized
 
-Check `asciidoctorKrokiEmbedded.diagramNames`. If it is empty, the package defaults are used. If it contains values, only those diagram names are registered.
+Check `asciidoctorKrokiEmbedded.diagramNames`. If it is empty, the package defaults are used except Mermaid. If it contains values, only those diagram names are registered, with Mermaid still excluded.
 
 ### A local diagram macro fails
 
