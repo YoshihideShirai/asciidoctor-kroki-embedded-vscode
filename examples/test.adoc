@@ -1,10 +1,138 @@
 = Kroki Embedded Sample
 :kroki-default-format: svg
 
+== Sequence
+
 [plantuml]
 ----
 @startuml
 Alice -> Bob: Hello
 Bob --> Alice: Hi
 @enduml
+----
+
+[seqdiag]
+----
+seqdiag {
+  browser -> extension [label = "open preview"];
+  extension -> kroki [label = "embed diagram"];
+  kroki --> extension [label = "svg"];
+}
+----
+
+== Architecture
+
+[c4plantuml]
+----
+@startuml
+!include <C4/C4_Container>
+
+Person(author, "Author")
+System_Boundary(vscode, "VS Code") {
+  Container(extension, "Kroki Embedded Extension", "TypeScript")
+  Container(preview, "AsciiDoc Preview", "Webview")
+}
+System_Ext(kroki, "Kroki renderer")
+
+Rel(author, extension, "writes AsciiDoc")
+Rel(extension, preview, "registers diagrams")
+Rel(preview, kroki, "hydrates embedded SVG")
+@enduml
+----
+
+[graphviz]
+----
+digraph G {
+  rankdir=LR
+  node [shape=box, style=rounded]
+  adoc [label="AsciiDoc"]
+  extension [label="VS Code extension"]
+  preview [label="Preview"]
+  svg [label="Embedded SVG"]
+
+  adoc -> extension -> preview -> svg
+}
+----
+
+[blockdiag]
+----
+blockdiag {
+  default_shape = roundedbox;
+  orientation = portrait;
+
+  source -> register -> preview -> hydrate -> render;
+}
+----
+
+== Data And Models
+
+[erd]
+----
+[document] {
+  *id
+  title
+}
+
+[diagram] {
+  *id
+  document_id
+  type
+  source
+}
+
+document ||--o{ diagram
+----
+
+[nomnoml]
+----
+#direction: right
+[Document] -> [Diagram]
+[Diagram|type; source] -> [Renderer]
+[Renderer] -> [SVG]
+----
+
+== UI And Signals
+
+[ditaa]
+----
++-------------+     +-------------+
+| AsciiDoc    | --> | Preview     |
+| document    |     | webview     |
++-------------+     +------+------+
+                         |
+                         v
+                  +-------------+
+                  | Embedded    |
+                  | diagram     |
+                  +-------------+
+----
+
+[wavedrom]
+----
+{ signal: [
+  { name: "edit",    wave: "p...|...." },
+  { name: "preview", wave: "01..|0.1." },
+  { name: "render",  wave: "0.10|.10." }
+] }
+----
+
+[vegalite]
+----
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "data": {
+    "values": [
+      { "diagram": "PlantUML", "count": 2 },
+      { "diagram": "Graphviz", "count": 1 },
+      { "diagram": "Blockdiag", "count": 1 },
+      { "diagram": "Other", "count": 4 }
+    ]
+  },
+  "mark": "bar",
+  "encoding": {
+    "x": { "field": "diagram", "type": "nominal" },
+    "y": { "field": "count", "type": "quantitative" },
+    "color": { "field": "diagram", "type": "nominal", "legend": null }
+  }
+}
 ----
