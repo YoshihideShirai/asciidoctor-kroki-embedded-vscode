@@ -20,8 +20,6 @@ This extension does not provide an AsciiDoc previewer by itself. Install and ena
 
 - [AsciiDoc](https://marketplace.visualstudio.com/items?itemName=asciidoctor.asciidoctor-vscode) (`asciidoctor.asciidoctor-vscode`)
 
-If `asciidoctor-vscode` is not installed, the preview command shows an error message.
-
 > [!IMPORTANT]
 > This extension requires a version of `asciidoctor-vscode` that includes asciidoctor/asciidoctor-vscode#1035, which adds the `asciidoc.asciidoctorExtensions` contribution point and the `registerAsciidoctorExtensions(registry, context)` hook used by this extension. The pull request was merged on June 27, 2026. If the Marketplace version you have installed does not include that change yet, install a pre-release build or a build from `asciidoctor-vscode` main that contains the merge.
 
@@ -36,9 +34,8 @@ After installation, open an AsciiDoc file. The extension activates automatically
 ## Usage
 
 1. Open an AsciiDoc file in VS Code.
-2. Open the Command Palette.
-3. Run `Asciidoctor Kroki Embedded: Open Preview`.
-4. The `asciidoctor-vscode` preview opens to the side with Kroki-compatible diagram blocks registered.
+2. Open the preview provided by `asciidoctor-vscode`.
+3. Kroki-compatible diagram blocks are registered through the `asciidoctor-vscode` extension hook.
 
 The same configuration is also used by supported `asciidoctor-vscode` preview and export operations that load registered Asciidoctor extensions.
 
@@ -86,10 +83,6 @@ You can configure the extension from VS Code settings.
 - The generated HTML contains embedded diagram targets. Local hydration/rendering support depends on the preview host.
 
 ## Troubleshooting
-
-### Preview does not open
-
-Make sure `asciidoctor-vscode` is installed and enabled.
 
 ### Diagram syntax is not recognized
 

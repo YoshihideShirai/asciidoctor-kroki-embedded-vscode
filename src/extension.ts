@@ -1,9 +1,5 @@
 import * as vscode from 'vscode';
 
-const COMMAND_PREVIEW = 'asciidoctorKrokiEmbedded.showPreview';
-const ASCIIDOCTOR_VSCODE_EXTENSION_ID = 'asciidoctor.asciidoctor-vscode';
-const ASCIIDOCTOR_PREVIEW_TO_SIDE_COMMAND = 'asciidoc.showPreviewToSide';
-
 export interface KrokiEmbeddedOptions {
   defaultFormat: string;
   diagramNames?: string[];
@@ -74,17 +70,7 @@ function registerKrokiEmbedded(registry: any, options: KrokiEmbeddedOptions): vo
   throw new Error('Failed to load asciidoctor-kroki-embedded: unsupported module shape.');
 }
 
-export function activate(context: vscode.ExtensionContext): AsciidoctorVscodeApi {
-  context.subscriptions.push(vscode.commands.registerCommand(COMMAND_PREVIEW, async () => {
-    const asciidoctorVscode = vscode.extensions.getExtension(ASCIIDOCTOR_VSCODE_EXTENSION_ID);
-    if (asciidoctorVscode === undefined) {
-      void vscode.window.showErrorMessage('asciidoctor-vscode is not installed.');
-      return;
-    }
-
-    await vscode.commands.executeCommand(ASCIIDOCTOR_PREVIEW_TO_SIDE_COMMAND);
-  }));
-
+export function activate(): AsciidoctorVscodeApi {
   return {
     registerAsciidoctorExtensions(registry: any, asciidoctorContext: AsciidoctorExtensionContext): void {
       registerKrokiEmbedded(registry, getKrokiEmbeddedOptions(asciidoctorContext.documentUri));
