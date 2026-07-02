@@ -16,8 +16,7 @@
     "Other"
   ],
   "activationEvents": [
-    "onLanguage:asciidoc",
-    "onCommand:asciidoctorKrokiEmbedded.showPreview"
+    "onLanguage:asciidoc"
   ],
   "main": "./dist/extension.js",
   "contributes": {
@@ -28,12 +27,6 @@
     "asciidoc.previewScripts": [
       "dist/plantuml-viz-global.js",
       "dist/preview.js"
-    ],
-    "commands": [
-      {
-        "command": "asciidoctorKrokiEmbedded.showPreview",
-        "title": "Asciidoctor Kroki Embedded: Open Preview"
-      }
     ],
     "configuration": {
       "title": "Asciidoctor Kroki Embedded",
