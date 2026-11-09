@@ -1,45 +1,5 @@
-import { renderToString } from '@plantuml/core';
 import { hydrateEmbeddedDiagrams } from 'asciidoctor-kroki-embedded/browser';
-
-declare global {
-  interface Window {
-    Viz?: unknown;
-  }
-}
-
-type RenderArgs = {
-  source: string;
-  output: HTMLElement;
-};
-
-function delay(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-async function waitForViz(): Promise<void> {
-  for (let attempt = 0; attempt < 50; attempt += 1) {
-    if (window.Viz) {
-      return;
-    }
-    await delay(100);
-  }
-  throw new Error('PlantUML Graphviz renderer is not available.');
-}
-
-function renderPlantUmlSvg(source: string): Promise<string> {
-  return new Promise((resolve, reject) => {
-    renderToString(
-      source.split(/\r?\n/),
-      resolve,
-      (message: string) => reject(new Error(message))
-    );
-  });
-}
-
-async function renderPlantUml({ source, output }: RenderArgs): Promise<void> {
-  await waitForViz();
-  output.innerHTML = await renderPlantUmlSvg(source);
-}
+import { libraries, LOCAL_DIAGRAM_NAMES, prepareWaveDrom } from './renderers';
 
 let hydrating = false;
 let queued = false;
@@ -54,12 +14,23 @@ async function hydrate(): Promise<void> {
   try {
     do {
       queued = false;
+      prepareWaveDrom();
+      for (const diagram of Array.from(document.querySelectorAll<HTMLElement>('.kroki-embedded[data-diagram-type]'))) {
+        const type = diagram.dataset.diagramType!;
+        if (type === 'plantuml' || type === 'mermaid' || LOCAL_DIAGRAM_NAMES.has(type) || diagram.classList.contains('kroki-embedded-failed')) {
+          continue;
+        }
+        diagram.classList.add('kroki-embedded-failed');
+        const output = diagram.querySelector('.kroki-embedded-output');
+        if (output) output.textContent = `Local rendering is not supported for "${type}". No data was sent to a server.`;
+      }
       await hydrateEmbeddedDiagrams(document, {
-        selector: '.kroki-embedded[data-diagram-type]:not([data-diagram-type="mermaid"]):not(.kroki-embedded-failed)',
+        selector: '.kroki-embedded[data-diagram-type]:not([data-diagram-type="mermaid"]):not([data-diagram-type="plantuml"]):not(.kroki-embedded-failed)',
+        libraries,
         renderers: {
           mermaid: undefined,
-          plantuml: renderPlantUml,
-          c4plantuml: renderPlantUml
+          plantuml: undefined,
+          c4plantuml: undefined
         }
       });
     } while (queued);

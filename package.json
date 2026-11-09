@@ -26,7 +26,6 @@
       "dist/kroki-embedded.css"
     ],
     "asciidoc.previewScripts": [
-      "dist/plantuml-viz-global.js",
       "dist/preview.js"
     ],
     "commands": [
@@ -41,7 +40,8 @@
         "asciidoctorKrokiEmbedded.defaultFormat": {
           "type": "string",
           "default": "svg",
-          "description": "Default diagram format passed to asciidoctor-kroki-embedded."
+          "description": "Default diagram format passed to asciidoctor-kroki-embedded.",
+          "scope": "resource"
         },
         "asciidoctorKrokiEmbedded.diagramNames": {
           "type": "array",
@@ -49,7 +49,8 @@
             "type": "string"
           },
           "default": [],
-          "description": "Diagram block and macro names to register. Leave empty to use the package defaults except Mermaid. Mermaid is always excluded."
+          "description": "Diagram block and macro names to register. Leave empty to use package defaults except PlantUML and Mermaid, which are always handled by the AsciiDoc extension.",
+          "scope": "resource"
         }
       }
     }
@@ -57,15 +58,23 @@
   "scripts": {
     "build": "npm run bundle",
     "bundle": "npm run bundle:assets && npm run bundle:extension && npm run bundle:preview",
-    "bundle:assets": "mkdir -p dist && cp node_modules/@plantuml/core/viz-global.js dist/plantuml-viz-global.js && cp node_modules/asciidoctor-kroki-embedded/src/style.css dist/kroki-embedded.css",
+    "bundle:assets": "mkdir -p dist && cp node_modules/asciidoctor-kroki-embedded/src/style.css dist/kroki-embedded.css",
     "bundle:extension": "esbuild src/extension.ts --bundle --platform=node --format=cjs --target=node20 --external:vscode --outfile=dist/extension.js --sourcemap",
-    "bundle:preview": "esbuild src/preview.ts --bundle --platform=browser --format=iife --target=es2020 --outfile=dist/preview.js --sourcemap",
+    "bundle:preview": "esbuild src/preview.ts --bundle --platform=browser --format=iife --target=es2020 --outfile=dist/preview.js --sourcemap --alias:fs=./src/browser-node-stub.ts --alias:node:fs=./src/browser-node-stub.ts --alias:path=./src/browser-node-stub.ts",
     "check": "tsc -p . --noEmit",
     "vscode:prepublish": "npm run build"
   },
   "dependencies": {
-    "@plantuml/core": "^1.2026.6",
-    "asciidoctor-kroki-embedded": "github:YoshihideShirai/asciidoctor-kroki-embedded#v0.3.0"
+    "@viz-js/viz": "^3.31.0",
+    "asciidoctor-kroki-embedded": "github:YoshihideShirai/asciidoctor-kroki-embedded#v0.3.0",
+    "bit-field": "^1.11.0",
+    "json5": "^2.2.3",
+    "nomnoml": "^1.7.0",
+    "pikchr-js": "^0.1.4",
+    "vega": "^6.4.0",
+    "vega-interpreter": "^2.3.2",
+    "vega-lite": "^6.5.0",
+    "wavedrom": "^3.8.0"
   },
   "devDependencies": {
     "@types/node": "^20.16.5",

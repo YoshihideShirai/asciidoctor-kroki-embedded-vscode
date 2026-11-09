@@ -1,6 +1,15 @@
 = Kroki Embedded Sample
 :kroki-default-format: svg
 
+== Expected Results
+
+Open this document with `Asciidoctor Kroki Embedded: Open Preview`.
+
+* The AsciiDoc extension renders PlantUML and Mermaid.
+* This extension renders Graphviz, Nomnoml, Vega, Vega-Lite, WaveDrom, Bytefield, and Pikchr locally.
+* Seqdiag, C4PlantUML, Blockdiag, ERD, and Ditaa display a local-rendering-not-supported message.
+* No diagram source handled by this extension is sent to a Kroki server.
+
 == Sequence
 
 [plantuml]
@@ -9,6 +18,15 @@
 Alice -> Bob: Hello
 Bob --> Alice: Hi
 @enduml
+----
+
+[mermaid]
+----
+sequenceDiagram
+  participant Author
+  participant Preview
+  Author->>Preview: Open AsciiDoc
+  Preview-->>Author: Render Mermaid using the AsciiDoc extension
 ----
 
 [seqdiag]
@@ -135,4 +153,72 @@ document ||--o{ diagram
     "color": { "field": "diagram", "type": "nominal", "legend": null }
   }
 }
+----
+
+== Vega
+
+This uses the Vega renderer directly, independently of the Vega-Lite compiler.
+All data is embedded in the specification.
+
+[vega]
+----
+{
+  "width": 320,
+  "height": 120,
+  "padding": 10,
+  "data": [
+    {
+      "name": "table",
+      "values": [
+        { "label": "Graphviz", "value": 80 },
+        { "label": "Nomnoml", "value": 55 },
+        { "label": "WaveDrom", "value": 95 }
+      ]
+    }
+  ],
+  "scales": [
+    { "name": "x", "type": "band", "domain": { "data": "table", "field": "label" }, "range": "width", "padding": 0.2 },
+    { "name": "y", "type": "linear", "domain": [0, 100], "range": "height", "zero": true }
+  ],
+  "axes": [
+    { "orient": "bottom", "scale": "x" },
+    { "orient": "left", "scale": "y" }
+  ],
+  "marks": [
+    {
+      "type": "rect",
+      "from": { "data": "table" },
+      "encode": {
+        "enter": {
+          "x": { "scale": "x", "field": "label" },
+          "width": { "scale": "x", "band": 1 },
+          "y": { "scale": "y", "field": "value" },
+          "y2": { "scale": "y", "value": 0 },
+          "fill": { "value": "steelblue" }
+        }
+      }
+    }
+  ]
+}
+----
+
+== Bytefield
+
+[bytefield]
+----
+{
+  reg: [
+    { bits: 8, name: "Type" },
+    { bits: 8, name: "Flags" },
+    { bits: 16, name: "Length" }
+  ],
+  options: { bits: 32, lanes: 1 }
+}
+----
+
+== Pikchr
+
+[pikchr]
+----
+box "AsciiDoc"; arrow; box "Extension"; arrow; box "SVG"
 ----

@@ -30,7 +30,7 @@ interface KrokiEmbeddedModule {
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const krokiEmbedded = require('asciidoctor-kroki-embedded') as KrokiEmbeddedModule;
-const EXCLUDED_DIAGRAM_NAMES = new Set(['mermaid']);
+const EXCLUDED_DIAGRAM_NAMES = new Set(['plantuml', 'mermaid']);
 
 function getDefaultDiagramNames(): string[] {
   if (!Array.isArray(krokiEmbedded.DEFAULT_DIAGRAM_NAMES)) {

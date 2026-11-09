@@ -8,7 +8,7 @@ Kroki 互換の diagram ブロックとブロックマクロを認識し、Kroki
 
 ## 機能
 
-- AsciiDoc のプレビューとエクスポートで `asciidoctor-kroki-embedded` を自動登録します。ただし Mermaid 図は対象外です。
+- AsciiDoc のプレビューとエクスポートで `asciidoctor-kroki-embedded` を自動登録します。ただし PlantUML と Mermaid は AsciiDoc 拡張が描画します。
 - `[plantuml]`、`[vega]`、`[wavedrom]`、`[graphviz]` など、パッケージが扱う Kroki 形式の diagram ブロックをサポートします。
 - `plantuml::diagrams/sequence.puml[]` のようなローカル diagram ブロックマクロをサポートします。
 - リモート diagram マクロ、絶対パス、文書ディレクトリ外へのパストラバーサルは、元パッケージ側で無効化されます。
@@ -58,6 +58,13 @@ digraph G {
 plantuml::diagrams/sequence.puml[]
 ```
 
+## diagram の描画分担
+
+- `plantuml` と `mermaid` は AsciiDoc 拡張が描画します。本拡張はブロック・マクロを登録せず、描画処理にも介入しません。
+- 本拡張は `graphviz`、`nomnoml`、`vega`、`vegalite`、`wavedrom`、`bytefield`、`pikchr` を同梱ライブラリでローカル描画します。WebAssembly の実行を許可するプレビューホストが必要です。
+- その他の形式（`c4plantuml`、`seqdiag`、`blockdiag`、`erd`、`ditaa` など）は構文を認識しますが、現在ローカル描画は未対応です。プレビューに未対応メッセージを表示し、Kroki サーバーには送信しません。
+- 本拡張の Vega/Vega-Lite 描画は外部 URL のデータや画像を読み込みません。文書内にデータを埋め込んでください。
+
 ## 設定
 
 VS Code の設定から拡張の動作を変更できます。
@@ -65,7 +72,7 @@ VS Code の設定から拡張の動作を変更できます。
 | 設定 | 既定値 | 説明 |
 | --- | --- | --- |
 | `asciidoctorKrokiEmbedded.defaultFormat` | `svg` | `asciidoctor-kroki-embedded` に渡す既定の diagram format です。 |
-| `asciidoctorKrokiEmbedded.diagramNames` | `[]` | 登録する diagram ブロック名とマクロ名です。空の場合は Mermaid を除いたパッケージの既定値を使用します。Mermaid は常に除外されます。 |
+| `asciidoctorKrokiEmbedded.diagramNames` | `[]` | 登録する diagram ブロック名とマクロ名です。空の場合は PlantUML と Mermaid を除いたパッケージの既定値を使用します。PlantUML と Mermaid は常に除外されます。 |
 
 ### `settings.json` の例
 
@@ -93,11 +100,20 @@ VS Code の設定から拡張の動作を変更できます。
 
 ### diagram 構文が認識されない
 
-`asciidoctorKrokiEmbedded.diagramNames` を確認してください。空の場合は Mermaid を除いたパッケージの既定値を使用します。値が入っている場合は、指定した diagram 名だけが登録されますが、Mermaid は常に除外されます。
+`asciidoctorKrokiEmbedded.diagramNames` を確認してください。空の場合は PlantUML と Mermaid を除いたパッケージの既定値を使用します。値が入っている場合は、指定した diagram 名だけが登録されますが、PlantUML と Mermaid は常に除外されます。
 
 ### ローカル diagram マクロが失敗する
 
 `plantuml::diagrams/sequence.puml[]` のように、AsciiDoc 文書ディレクトリ配下の相対パスを指定してください。リモート URL、絶対パス、文書ディレクトリ外へのパスは意図的に拒否されます。
+
+## 開発・デバッグ
+
+1. このリポジトリを VS Code で開き、ターミナルで `npm ci` を実行します。
+2. 上記「必要な拡張」を満たす AsciiDoc 拡張をインストールして有効化します。WSL / SSH / Dev Container を使う場合は、接続先にもインストールしてください。
+3. `src/extension.ts` にブレークポイントを設定し、実行とデバッグで `Run Extension` を選んで **F5** を押します。型チェックとビルドの後、Extension Development Host が開きます。
+4. 起動したウィンドウで `test.adoc` を開き、`Asciidoctor Kroki Embedded: Open Preview` を実行します。
+
+TypeScript のソースマップを使って拡張ホスト側をデバッグできます。コードを変更したらデバッグを停止して F5 で起動し直すと、再ビルドされます。`src/preview.ts` のブラウザー側処理は、起動したウィンドウの `Developer: Open Webview Developer Tools` で確認してください。
 
 ## フィードバック
 
