@@ -61,8 +61,9 @@ plantuml::diagrams/sequence.puml[]
 ## Diagram rendering
 
 - The AsciiDoc extension renders `plantuml` and `mermaid`. This extension does not register their blocks or macros or hydrate their output.
-- This extension bundles local renderers for `graphviz`, `nomnoml`, `vega`, `vegalite`, `wavedrom`, `bytefield`, and `pikchr`. The preview host must permit WebAssembly.
-- Other formats, including `c4plantuml`, `seqdiag`, `blockdiag`, `erd`, and `ditaa`, are recognized but currently have no local renderer. The preview displays an unsupported-format message without sending the source to a Kroki server.
+- This extension bundles local renderers for `graphviz`, `nomnoml`, `vega`, `vegalite`, `wavedrom`, `bytefield`, `pikchr`, `d2`, and `lini` (`dot` is a Graphviz alias). The preview host must permit WebAssembly.
+- D2 also requires blob Web Workers (`worker-src blob:`) and `script-src 'unsafe-eval'` for its bundled layout engine. Lini WASM is embedded in the preview bundle; no external download is required. Lini image nodes and D2 image nodes are rejected to keep rendering local.
+- Other formats, including `c4plantuml`, `seqdiag`, `blockdiag`, `erd`, `ditaa`, `svgbob`, and `excalidraw`, are recognized but currently have no local renderer. The preview displays an unsupported-format message without sending the source to a Kroki server.
 - This extension blocks external data and image URLs in Vega/Vega-Lite. Embed data in the specification.
 
 ## Settings

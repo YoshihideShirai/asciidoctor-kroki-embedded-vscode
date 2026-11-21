@@ -11,3 +11,8 @@ declare module 'asciidoctor-kroki-embedded/browser' {
 
 declare module 'wavedrom';
 declare module 'bit-field';
+
+declare module '*.wasm' {
+  const bytes: Uint8Array;
+  export default bytes;
+}

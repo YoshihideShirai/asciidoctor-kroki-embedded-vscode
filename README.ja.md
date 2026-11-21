@@ -61,8 +61,9 @@ plantuml::diagrams/sequence.puml[]
 ## diagram の描画分担
 
 - `plantuml` と `mermaid` は AsciiDoc 拡張が描画します。本拡張はブロック・マクロを登録せず、描画処理にも介入しません。
-- 本拡張は `graphviz`、`nomnoml`、`vega`、`vegalite`、`wavedrom`、`bytefield`、`pikchr` を同梱ライブラリでローカル描画します。WebAssembly の実行を許可するプレビューホストが必要です。
-- その他の形式（`c4plantuml`、`seqdiag`、`blockdiag`、`erd`、`ditaa` など）は構文を認識しますが、現在ローカル描画は未対応です。プレビューに未対応メッセージを表示し、Kroki サーバーには送信しません。
+- 本拡張は `graphviz`、`nomnoml`、`vega`、`vegalite`、`wavedrom`、`bytefield`、`pikchr`、`d2`、`lini`（`dot` は Graphviz の別名）を同梱ライブラリでローカル描画します。WebAssembly の実行を許可するプレビューホストが必要です。
+- D2 には blob Web Worker の許可（`worker-src blob:`）と、同梱レイアウトエンジン用の `script-src 'unsafe-eval'` も必要です。Lini の WASM はプレビューバンドルに埋め込み、外部ダウンロードは行いません。Lini と D2 の画像ノードは拒否します。
+- その他の形式（`c4plantuml`、`seqdiag`、`blockdiag`、`erd`、`ditaa`、`svgbob`、`excalidraw` など）は構文を認識しますが、現在ローカル描画は未対応です。プレビューに未対応メッセージを表示し、Kroki サーバーには送信しません。
 - 本拡張の Vega/Vega-Lite 描画は外部 URL のデータや画像を読み込みません。文書内にデータを埋め込んでください。
 
 ## 設定

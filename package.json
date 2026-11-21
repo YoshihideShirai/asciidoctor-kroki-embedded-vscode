@@ -60,7 +60,7 @@
     "bundle": "npm run bundle:assets && npm run bundle:extension && npm run bundle:preview",
     "bundle:assets": "mkdir -p dist && cp node_modules/asciidoctor-kroki-embedded/src/style.css dist/kroki-embedded.css",
     "bundle:extension": "esbuild src/extension.ts --bundle --platform=node --format=cjs --target=node20 --external:vscode --outfile=dist/extension.js --sourcemap",
-    "bundle:preview": "esbuild src/preview.ts --bundle --platform=browser --format=iife --target=es2020 --outfile=dist/preview.js --sourcemap --alias:fs=./src/browser-node-stub.ts --alias:node:fs=./src/browser-node-stub.ts --alias:path=./src/browser-node-stub.ts",
+    "bundle:preview": "esbuild src/preview.ts --bundle --platform=browser --format=iife --target=es2020 --outfile=dist/preview.js --sourcemap --loader:.wasm=binary --alias:fs=./src/browser-node-stub.ts --alias:node:fs=./src/browser-node-stub.ts --alias:path=./src/browser-node-stub.ts",
     "check": "tsc -p . --noEmit",
     "vscode:prepublish": "npm run build"
   },

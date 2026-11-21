@@ -6,8 +6,8 @@
 Open this document with `Asciidoctor Kroki Embedded: Open Preview`.
 
 * The AsciiDoc extension renders PlantUML and Mermaid.
-* This extension renders Graphviz, Nomnoml, Vega, Vega-Lite, WaveDrom, Bytefield, and Pikchr locally.
-* Seqdiag, C4PlantUML, Blockdiag, ERD, and Ditaa display a local-rendering-not-supported message.
+* This extension renders Graphviz, Nomnoml, Vega, Vega-Lite, WaveDrom, Bytefield, Pikchr, D2, and Lini locally (`dot` is a Graphviz alias).
+* Seqdiag, C4PlantUML, Blockdiag, ERD, Ditaa, SvgBob, and Excalidraw display a local-rendering-not-supported message.
 * No diagram source handled by this extension is sent to a Kroki server.
 
 == Sequence
@@ -221,4 +221,44 @@ All data is embedded in the specification.
 [pikchr]
 ----
 box "AsciiDoc"; arrow; box "Extension"; arrow; box "SVG"
+----
+
+== Graphviz Alias
+
+[dot]
+----
+digraph G {
+  rankdir=LR
+  Source -> Preview -> SVG
+}
+----
+
+== D2
+
+D2 runs locally in a Web Worker. The preview host must allow blob workers and `script-src 'unsafe-eval'` for the bundled layout engine.
+
+[d2]
+----
+direction: right
+source: AsciiDoc
+preview: Preview
+svg: Embedded SVG
+source -> preview -> svg
+----
+
+== Lini
+
+[lini]
+----
+|box#source| "AsciiDoc"
+|box#preview| "Preview"
+|box#svg| "SVG"
+source -> preview -> svg
+----
+
+The static option outlines text and inlines theme colours.
+
+[lini,static=true]
+----
+|box| "Local static SVG"
 ----
