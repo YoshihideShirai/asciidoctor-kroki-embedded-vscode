@@ -111,7 +111,9 @@ Use a relative path under the AsciiDoc document directory, for example `plantuml
 1. Open this repository in VS Code and run `npm ci` in the terminal.
 2. Install and enable the AsciiDoc extension described in Requirements. For WSL, SSH, or Dev Containers, install it in the remote environment as well.
 3. Set a breakpoint in `src/extension.ts`, select `Run Extension` in Run and Debug, and press **F5**. Type checking and bundling run before the Extension Development Host opens.
-4. Open `test.adoc` in the new window and run `Asciidoctor Kroki Embedded: Open Preview`.
+4. Open `examples/test.adoc` in the new window and run `Asciidoctor Kroki Embedded: Open Preview`.
+
+The debug configuration opens `.vscode/debug.code-workspace` in a new window, with the entire repository as its folder. The dedicated workspace file gives the development window a separate identity from the editing folder. This allows the webview to load this extension's CSS and JavaScript from `dist` even if the installed AsciiDoc extension omits contributed resource directories from `localResourceRoots`. Opening only `examples` can cause diagram sources to appear instead. If this also occurs with a normally installed extension, the AsciiDoc extension needs a fix to allow contributed resource directories.
 
 Source maps enable debugging the extension host using the TypeScript sources. After editing code, stop debugging and press F5 again to rebuild. Inspect browser-side code in `src/preview.ts` using `Developer: Open Webview Developer Tools` in the development window.
 

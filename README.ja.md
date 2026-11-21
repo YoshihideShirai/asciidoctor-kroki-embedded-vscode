@@ -111,7 +111,9 @@ VS Code の設定から拡張の動作を変更できます。
 1. このリポジトリを VS Code で開き、ターミナルで `npm ci` を実行します。
 2. 上記「必要な拡張」を満たす AsciiDoc 拡張をインストールして有効化します。WSL / SSH / Dev Container を使う場合は、接続先にもインストールしてください。
 3. `src/extension.ts` にブレークポイントを設定し、実行とデバッグで `Run Extension` を選んで **F5** を押します。型チェックとビルドの後、Extension Development Host が開きます。
-4. 起動したウィンドウで `test.adoc` を開き、`Asciidoctor Kroki Embedded: Open Preview` を実行します。
+4. 起動したウィンドウで `examples/test.adoc` を開き、`Asciidoctor Kroki Embedded: Open Preview` を実行します。
+
+デバッグ起動では専用の `.vscode/debug.code-workspace` を別ウィンドウで開き、その中にリポジトリ全体を含めます。編集中のフォルダーとワークスペースの識別子を分けることで、起動先の競合を避けます。利用中の AsciiDoc 拡張が追加拡張のリソースディレクトリを Webview の `localResourceRoots` に含めない場合でも、本拡張の `dist` がワークスペース内にあることで CSS・JavaScript を読み込めます。`examples` だけをワークスペースとして開くと、この問題により diagram のソースが表示されることがあります。通常インストール時にも発生する場合は、AsciiDoc 拡張側で追加拡張のリソースを許可する修正が必要です。
 
 TypeScript のソースマップを使って拡張ホスト側をデバッグできます。コードを変更したらデバッグを停止して F5 で起動し直すと、再ビルドされます。`src/preview.ts` のブラウザー側処理は、起動したウィンドウの `Developer: Open Webview Developer Tools` で確認してください。
 

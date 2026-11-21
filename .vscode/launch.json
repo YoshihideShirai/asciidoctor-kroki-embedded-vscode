@@ -6,8 +6,9 @@
       "type": "extensionHost",
       "request": "launch",
       "args": [
+        "--new-window",
         "--extensionDevelopmentPath=${workspaceFolder}",
-        "${workspaceFolder}/examples"
+        "${workspaceFolder}/.vscode/debug.code-workspace"
       ],
       "outFiles": ["${workspaceFolder}/dist/**/*.js"],
       "preLaunchTask": "build extension"
