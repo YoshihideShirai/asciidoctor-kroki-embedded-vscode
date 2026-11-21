@@ -30,7 +30,8 @@ async function hydrate(): Promise<void> {
         renderers: {
           mermaid: undefined,
           plantuml: undefined,
-          c4plantuml: undefined
+          c4plantuml: undefined,
+          d2: undefined
         }
       });
     } while (queued);

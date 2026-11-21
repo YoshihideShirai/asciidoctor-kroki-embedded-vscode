@@ -60,11 +60,24 @@ plantuml::diagrams/sequence.puml[]
 
 ## diagram の描画分担
 
-- `plantuml` と `mermaid` は AsciiDoc 拡張が描画します。本拡張はブロック・マクロを登録せず、描画処理にも介入しません。
-- 本拡張は `graphviz`、`nomnoml`、`vega`、`vegalite`、`wavedrom`、`bytefield`、`pikchr`、`d2`、`lini`（`dot` は Graphviz の別名）を同梱ライブラリでローカル描画します。WebAssembly の実行を許可するプレビューホストが必要です。
-- D2 には blob Web Worker の許可（`worker-src blob:`）と、同梱レイアウトエンジン用の `script-src 'unsafe-eval'` も必要です。Lini の WASM はプレビューバンドルに埋め込み、外部ダウンロードは行いません。Lini と D2 の画像ノードは拒否します。
-- その他の形式（`c4plantuml`、`seqdiag`、`blockdiag`、`erd`、`ditaa`、`svgbob`、`excalidraw` など）は構文を認識しますが、現在ローカル描画は未対応です。プレビューに未対応メッセージを表示し、Kroki サーバーには送信しません。
-- 本拡張の Vega/Vega-Lite 描画は外部 URL のデータや画像を読み込みません。文書内にデータを埋め込んでください。
+| ダイアグラム | 対応状況 |
+| --- | --- |
+| Graphviz（`graphviz`、`dot`） | ローカル描画に対応 |
+| Nomnoml（`nomnoml`） | ローカル描画に対応 |
+| Vega / Vega-Lite（`vega`、`vegalite`） | ローカル描画に対応。外部データ・画像 URL は読み込みません |
+| WaveDrom（`wavedrom`） | ローカル描画に対応 |
+| Bytefield（`bytefield`） | ローカル描画に対応 |
+| Pikchr（`pikchr`） | ローカル描画に対応 |
+| Lini（`lini`） | ローカル描画に対応。画像ノードは拒否します |
+| PlantUML / Mermaid（`plantuml`、`mermaid`） | AsciiDoc 拡張が描画 |
+| D2（`d2`） | **非サポート。レンダラー対象外** |
+| `c4plantuml`、`seqdiag`、`blockdiag`、`erd`、`ditaa`、`svgbob`、`excalidraw` など、その他の形式 | ローカル描画は未対応 |
+
+WebAssembly を使用する同梱レンダラーには、WebAssembly の実行を許可するプレビューホストが必要です。Lini の WASM はプレビューバンドルに埋め込み、外部ダウンロードは行いません。
+
+D2 は、同梱レイアウトエンジンが blob Web Worker に加えて `script-src 'unsafe-eval'` を必要とするため、非サポートとしています。本拡張はこれらの CSP 許可を要求せず、D2 エンジンも読み込みません。
+
+D2 を含む未対応形式は構文を認識しますが、描画せず、プレビューに未対応メッセージを表示します。Kroki サーバーへの送信も行いません。PlantUML と Mermaid は本拡張でブロック・マクロを登録せず、描画処理にも介入しません。Vega/Vega-Lite のデータは文書内に埋め込んでください。
 
 ## 設定
 

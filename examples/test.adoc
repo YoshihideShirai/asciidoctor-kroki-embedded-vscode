@@ -6,8 +6,8 @@
 Open this document with `Asciidoctor Kroki Embedded: Open Preview`.
 
 * The AsciiDoc extension renders PlantUML and Mermaid.
-* This extension renders Graphviz, Nomnoml, Vega, Vega-Lite, WaveDrom, Bytefield, Pikchr, D2, and Lini locally (`dot` is a Graphviz alias).
-* Seqdiag, C4PlantUML, Blockdiag, ERD, Ditaa, SvgBob, and Excalidraw display a local-rendering-not-supported message.
+* This extension renders Graphviz, Nomnoml, Vega, Vega-Lite, WaveDrom, Bytefield, Pikchr, and Lini locally (`dot` is a Graphviz alias).
+* D2, Seqdiag, C4PlantUML, Blockdiag, ERD, Ditaa, SvgBob, and Excalidraw display a local-rendering-not-supported message.
 * No diagram source handled by this extension is sent to a Kroki server.
 
 == Sequence
@@ -235,7 +235,7 @@ digraph G {
 
 == D2
 
-D2 runs locally in a Web Worker. The preview host must allow blob workers and `script-src 'unsafe-eval'` for the bundled layout engine.
+D2 is unsupported. This block displays an unsupported-format message without rendering or sending data to a server.
 
 [d2]
 ----

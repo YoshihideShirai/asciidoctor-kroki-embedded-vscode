@@ -60,11 +60,24 @@ plantuml::diagrams/sequence.puml[]
 
 ## Diagram rendering
 
-- The AsciiDoc extension renders `plantuml` and `mermaid`. This extension does not register their blocks or macros or hydrate their output.
-- This extension bundles local renderers for `graphviz`, `nomnoml`, `vega`, `vegalite`, `wavedrom`, `bytefield`, `pikchr`, `d2`, and `lini` (`dot` is a Graphviz alias). The preview host must permit WebAssembly.
-- D2 also requires blob Web Workers (`worker-src blob:`) and `script-src 'unsafe-eval'` for its bundled layout engine. Lini WASM is embedded in the preview bundle; no external download is required. Lini image nodes and D2 image nodes are rejected to keep rendering local.
-- Other formats, including `c4plantuml`, `seqdiag`, `blockdiag`, `erd`, `ditaa`, `svgbob`, and `excalidraw`, are recognized but currently have no local renderer. The preview displays an unsupported-format message without sending the source to a Kroki server.
-- This extension blocks external data and image URLs in Vega/Vega-Lite. Embed data in the specification.
+| Diagram | Support |
+| --- | --- |
+| Graphviz (`graphviz`, `dot`) | Local rendering |
+| Nomnoml (`nomnoml`) | Local rendering |
+| Vega / Vega-Lite (`vega`, `vegalite`) | Local rendering; external data and image URLs are blocked |
+| WaveDrom (`wavedrom`) | Local rendering |
+| Bytefield (`bytefield`) | Local rendering |
+| Pikchr (`pikchr`) | Local rendering |
+| Lini (`lini`) | Local rendering; image nodes are rejected |
+| PlantUML / Mermaid (`plantuml`, `mermaid`) | Rendered by the AsciiDoc extension |
+| D2 (`d2`) | **Unsupported; excluded from rendering** |
+| `c4plantuml`, `seqdiag`, `blockdiag`, `erd`, `ditaa`, `svgbob`, `excalidraw`, and other formats | Local rendering is unsupported |
+
+The preview host must permit WebAssembly for the bundled renderers that use it. Lini WASM is embedded in the preview bundle; no external download is required.
+
+D2 is unsupported because its bundled layout engine requires `script-src 'unsafe-eval'` in addition to blob Web Workers. This extension does not request these CSP permissions or load the D2 engine.
+
+Unsupported formats, including D2, are recognized but display an unsupported-format message without rendering or sending the source to a Kroki server. This extension does not register PlantUML or Mermaid blocks or macros or hydrate their output. For Vega/Vega-Lite, embed data in the specification.
 
 ## Settings
 
