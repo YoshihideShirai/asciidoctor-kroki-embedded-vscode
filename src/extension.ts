@@ -1,3 +1,4 @@
+import { LOCAL_DIAGRAM_NAMES } from './diagram-names';
 import * as vscode from 'vscode';
 
 const COMMAND_PREVIEW = 'asciidoctorKrokiEmbedded.showPreview';
@@ -30,14 +31,13 @@ interface KrokiEmbeddedModule {
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const krokiEmbedded = require('asciidoctor-kroki-embedded') as KrokiEmbeddedModule;
-const EXCLUDED_DIAGRAM_NAMES = new Set(['plantuml', 'mermaid']);
 
 function getDefaultDiagramNames(): string[] {
   if (!Array.isArray(krokiEmbedded.DEFAULT_DIAGRAM_NAMES)) {
     return [];
   }
 
-  return krokiEmbedded.DEFAULT_DIAGRAM_NAMES.filter((name) => !EXCLUDED_DIAGRAM_NAMES.has(name.toLowerCase()));
+  return krokiEmbedded.DEFAULT_DIAGRAM_NAMES.filter((name) => LOCAL_DIAGRAM_NAMES.has(name));
 }
 
 function normalizeDiagramNames(diagramNames: string[]): string[] {
@@ -47,7 +47,7 @@ function normalizeDiagramNames(diagramNames: string[]): string[] {
 
   return sourceDiagramNames
     .map((name) => name.trim())
-    .filter((name) => name.length > 0 && !EXCLUDED_DIAGRAM_NAMES.has(name.toLowerCase()));
+    .filter((name) => name.length > 0 && LOCAL_DIAGRAM_NAMES.has(name));
 }
 
 function getKrokiEmbeddedOptions(documentUri?: vscode.Uri): KrokiEmbeddedOptions {

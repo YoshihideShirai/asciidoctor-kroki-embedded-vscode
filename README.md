@@ -77,7 +77,7 @@ The preview host must permit WebAssembly for the bundled renderers that use it. 
 
 D2 is unsupported because its bundled layout engine requires `script-src 'unsafe-eval'` in addition to blob Web Workers. This extension does not request these CSP permissions or load the D2 engine.
 
-Unsupported formats, including D2, are recognized but display an unsupported-format message without rendering or sending the source to a Kroki server. This extension does not register PlantUML or Mermaid blocks or macros or hydrate their output. For Vega/Vega-Lite, embed data in the specification.
+Blocks for unsupported formats, including D2, are left unregistered and use the standard Asciidoctor.js source display. No source is sent to a Kroki server. This extension does not register PlantUML or Mermaid blocks or macros or hydrate their output. For Vega/Vega-Lite, embed data in the specification.
 
 ## Settings
 
@@ -86,7 +86,7 @@ You can configure the extension from VS Code settings.
 | Setting | Default | Description |
 | --- | --- | --- |
 | `asciidoctorKrokiEmbedded.defaultFormat` | `svg` | Default diagram format passed to `asciidoctor-kroki-embedded`. |
-| `asciidoctorKrokiEmbedded.diagramNames` | `[]` | Diagram block and macro names to register. Leave empty to use the package defaults except PlantUML and Mermaid. PlantUML and Mermaid are always excluded. |
+| `asciidoctorKrokiEmbedded.diagramNames` | `[]` | Diagram block and macro names to register. Leave empty to use locally supported formats from the package defaults. Unsupported formats, PlantUML, and Mermaid are always excluded. |
 
 ### Example `settings.json`
 
@@ -114,7 +114,7 @@ Make sure `asciidoctor-vscode` is installed and enabled.
 
 ### Diagram syntax is not recognized
 
-Check `asciidoctorKrokiEmbedded.diagramNames`. If it is empty, the package defaults are used except PlantUML and Mermaid. If it contains values, only those diagram names are registered, with PlantUML and Mermaid still excluded.
+Check `asciidoctorKrokiEmbedded.diagramNames`. If it is empty, only locally supported package defaults are used. If it contains values, only those diagram names are registered, with unsupported formats, PlantUML, and Mermaid still excluded.
 
 ### A local diagram macro fails
 

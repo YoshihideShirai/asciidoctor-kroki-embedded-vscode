@@ -77,7 +77,7 @@ WebAssembly を使用する同梱レンダラーには、WebAssembly の実行�
 
 D2 は、同梱レイアウトエンジンが blob Web Worker に加えて `script-src 'unsafe-eval'` を必要とするため、非サポートとしています。本拡張はこれらの CSP 許可を要求せず、D2 エンジンも読み込みません。
 
-D2 を含む未対応形式は構文を認識しますが、描画せず、プレビューに未対応メッセージを表示します。Kroki サーバーへの送信も行いません。PlantUML と Mermaid は本拡張でブロック・マクロを登録せず、描画処理にも介入しません。Vega/Vega-Lite のデータは文書内に埋め込んでください。
+D2 を含む未対応形式のブロックは登録せず、Asciidoctor.js 標準のソース表示を使用します。Kroki サーバーへの送信も行いません。PlantUML と Mermaid は本拡張でブロック・マクロを登録せず、描画処理にも介入しません。Vega/Vega-Lite のデータは文書内に埋め込んでください。
 
 ## 設定
 
@@ -86,7 +86,7 @@ VS Code の設定から拡張の動作を変更できます。
 | 設定 | 既定値 | 説明 |
 | --- | --- | --- |
 | `asciidoctorKrokiEmbedded.defaultFormat` | `svg` | `asciidoctor-kroki-embedded` に渡す既定の diagram format です。 |
-| `asciidoctorKrokiEmbedded.diagramNames` | `[]` | 登録する diagram ブロック名とマクロ名です。空の場合は PlantUML と Mermaid を除いたパッケージの既定値を使用します。PlantUML と Mermaid は常に除外されます。 |
+| `asciidoctorKrokiEmbedded.diagramNames` | `[]` | 登録する diagram ブロック名とマクロ名です。空の場合は パッケージの既定値のうちローカル描画に対応する形式を使用します。未対応形式と PlantUML、Mermaid は常に除外されます。 |
 
 ### `settings.json` の例
 
@@ -114,7 +114,7 @@ VS Code の設定から拡張の動作を変更できます。
 
 ### diagram 構文が認識されない
 
-`asciidoctorKrokiEmbedded.diagramNames` を確認してください。空の場合は PlantUML と Mermaid を除いたパッケージの既定値を使用します。値が入っている場合は、指定した diagram 名だけが登録されますが、PlantUML と Mermaid は常に除外されます。
+`asciidoctorKrokiEmbedded.diagramNames` を確認してください。空の場合は パッケージの既定値のうちローカル描画に対応する形式を使用します。値が入っている場合は、指定した diagram 名だけが登録されますが、未対応形式と PlantUML、Mermaid は常に除外されます。
 
 ### ローカル diagram マクロが失敗する
 
