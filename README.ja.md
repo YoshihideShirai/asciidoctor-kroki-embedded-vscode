@@ -131,6 +131,14 @@ VS Code の設定から拡張の動作を変更できます。
 
 TypeScript のソースマップを使って拡張ホスト側をデバッグできます。コードを変更したらデバッグを停止して F5 で起動し直すと、再ビルドされます。`src/preview.ts` のブラウザー側処理は、起動したウィンドウの `Developer: Open Webview Developer Tools` で確認してください。
 
+## CI・リリース
+
+[CI and Release Package ワークフロー](.github/workflows/release-package.yml) は、[連番キャプション拡張のリリース構成](https://github.com/YoshihideShirai/asciidoctor-numbered-captions-vscode/blob/main/.github/workflows/release-package.yml) を参考にしています。PR、`main` への push、手動実行で、依存関係のインストール、型チェック、ビルド、VSIX 作成を行い、`vscode-extension-vsix` アーティファクトとして保存します。Node.js 22 とバージョンを固定した VSCE を使用し、`vscode:prepublish` 経由でバンドルを生成します。
+
+リリース時は `package.json` と `package-lock.json` の `version` を更新してコミットし、一致するタグ（例: バージョン `1.0.0` に対して `v1.0.0`）を push してください。タグの push で GitHub Release を作成・更新し、検証済みの VSIX を添付します。タグとバージョンが一致しない場合は、パッケージ作成前に失敗します。手動実行では、タグを選択した場合もアーティファクトの作成のみを行います。
+
+GitHub Release への添付には組み込みの `GITHUB_TOKEN` を使うため、追加のシークレット設定は不要です。Marketplace への公開はこのワークフローに含まれず、別途手動で行います。
+
 ## フィードバック
 
 不具合報告、機能要望、ドキュメント改善の提案は、プロジェクトリポジトリの Issue へお寄せください。

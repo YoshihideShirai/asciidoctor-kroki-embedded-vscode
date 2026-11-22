@@ -131,6 +131,14 @@ The debug configuration opens `.vscode/debug.code-workspace` in a new window, wi
 
 Source maps enable debugging the extension host using the TypeScript sources. After editing code, stop debugging and press F5 again to rebuild. Inspect browser-side code in `src/preview.ts` using `Developer: Open Webview Developer Tools` in the development window.
 
+## CI and releases
+
+The [CI and Release Package workflow](.github/workflows/release-package.yml) follows the [numbered captions extension's release workflow](https://github.com/YoshihideShirai/asciidoctor-numbered-captions-vscode/blob/main/.github/workflows/release-package.yml). Pull requests, pushes to `main`, and manual runs install dependencies, check types, build the extension, and upload a VSIX as the `vscode-extension-vsix` artifact. The workflow uses Node.js 22 and a pinned VSCE version; bundling runs through `vscode:prepublish`.
+
+To release, update `version` in `package.json` and `package-lock.json`, commit the changes, and push a matching tag (for example, `v1.0.0` for version `1.0.0`). A tag push creates or updates the GitHub Release and attaches the checked VSIX. A mismatched tag fails before packaging. Manual runs only produce an artifact, including when a tag is selected.
+
+GitHub Release uploads use the built-in `GITHUB_TOKEN`; no additional secret is required. Marketplace publication is a separate manual operation and is not part of this workflow.
+
 ## Feedback
 
 Please open an issue in the project repository for bug reports, feature requests, or documentation improvements.
