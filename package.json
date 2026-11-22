@@ -2,7 +2,7 @@
   "name": "asciidoctor-kroki-embedded-vscode",
   "displayName": "Asciidoctor Kroki Embedded Helper",
   "description": "Registers asciidoctor-kroki-embedded with asciidoctor-vscode preview and export workflows.",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "license": "MIT",
   "publisher": "yoshihideshirai",
   "repository": {
