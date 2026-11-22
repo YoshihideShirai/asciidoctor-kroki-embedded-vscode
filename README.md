@@ -8,7 +8,7 @@ It recognizes Kroki-compatible diagram blocks and block macros, then emits embed
 
 ## Features
 
-- Registers `asciidoctor-kroki-embedded` automatically for AsciiDoc preview and export, excluding Mermaid diagrams.
+- Registers `asciidoctor-kroki-embedded` automatically for AsciiDoc preview and export, with PlantUML and Mermaid rendered by the AsciiDoc extension.
 - Supports Kroki-style diagram blocks such as `[plantuml]`, `[vega]`, `[wavedrom]`, `[graphviz]`, and many others handled by the package.
 - Supports local diagram block macros such as `plantuml::diagrams/sequence.puml[]`.
 - Keeps remote diagram macro targets, absolute paths, and path traversal outside the document directory disabled by the underlying package.
@@ -58,6 +58,27 @@ digraph G {
 plantuml::diagrams/sequence.puml[]
 ```
 
+## Diagram rendering
+
+| Diagram | Support |
+| --- | --- |
+| Graphviz (`graphviz`, `dot`) | Local rendering |
+| Nomnoml (`nomnoml`) | Local rendering |
+| Vega / Vega-Lite (`vega`, `vegalite`) | Local rendering; external data and image URLs are blocked |
+| WaveDrom (`wavedrom`) | Local rendering |
+| Bytefield (`bytefield`) | Local rendering |
+| Pikchr (`pikchr`) | Local rendering |
+| Lini (`lini`) | Local rendering; image nodes are rejected |
+| PlantUML / Mermaid (`plantuml`, `mermaid`) | Rendered by the AsciiDoc extension |
+| D2 (`d2`) | **Unsupported; excluded from rendering** |
+| `c4plantuml`, `seqdiag`, `blockdiag`, `erd`, `ditaa`, `svgbob`, `excalidraw`, and other formats | Local rendering is unsupported |
+
+The preview host must permit WebAssembly for the bundled renderers that use it. Lini WASM is embedded in the preview bundle; no external download is required.
+
+D2 is unsupported because its bundled layout engine requires `script-src 'unsafe-eval'` in addition to blob Web Workers. This extension does not request these CSP permissions or load the D2 engine.
+
+Blocks for unsupported formats, including D2, are left unregistered and use the standard Asciidoctor.js source display. No source is sent to a Kroki server. This extension does not register PlantUML or Mermaid blocks or macros or hydrate their output. For Vega/Vega-Lite, embed data in the specification.
+
 ## Settings
 
 You can configure the extension from VS Code settings.
@@ -65,7 +86,7 @@ You can configure the extension from VS Code settings.
 | Setting | Default | Description |
 | --- | --- | --- |
 | `asciidoctorKrokiEmbedded.defaultFormat` | `svg` | Default diagram format passed to `asciidoctor-kroki-embedded`. |
-| `asciidoctorKrokiEmbedded.diagramNames` | `[]` | Diagram block and macro names to register. Leave empty to use the package defaults except Mermaid. Mermaid is always excluded. |
+| `asciidoctorKrokiEmbedded.diagramNames` | `[]` | Diagram block and macro names to register. Leave empty to use locally supported formats from the package defaults. Unsupported formats, PlantUML, and Mermaid are always excluded. |
 
 ### Example `settings.json`
 
@@ -93,11 +114,22 @@ Make sure `asciidoctor-vscode` is installed and enabled.
 
 ### Diagram syntax is not recognized
 
-Check `asciidoctorKrokiEmbedded.diagramNames`. If it is empty, the package defaults are used except Mermaid. If it contains values, only those diagram names are registered, with Mermaid still excluded.
+Check `asciidoctorKrokiEmbedded.diagramNames`. If it is empty, only locally supported package defaults are used. If it contains values, only those diagram names are registered, with unsupported formats, PlantUML, and Mermaid still excluded.
 
 ### A local diagram macro fails
 
 Use a relative path under the AsciiDoc document directory, for example `plantuml::diagrams/sequence.puml[]`. Remote URLs, absolute paths, and paths outside the document directory are intentionally rejected.
+
+## Development and debugging
+
+1. Open this repository in VS Code and run `npm ci` in the terminal.
+2. Install and enable the AsciiDoc extension described in Requirements. For WSL, SSH, or Dev Containers, install it in the remote environment as well.
+3. Set a breakpoint in `src/extension.ts`, select `Run Extension` in Run and Debug, and press **F5**. Type checking and bundling run before the Extension Development Host opens.
+4. Open `examples/test.adoc` in the new window and run `Asciidoctor Kroki Embedded: Open Preview`.
+
+The debug configuration opens `.vscode/debug.code-workspace` in a new window, with the entire repository as its folder. The dedicated workspace file gives the development window a separate identity from the editing folder. This allows the webview to load this extension's CSS and JavaScript from `dist` even if the installed AsciiDoc extension omits contributed resource directories from `localResourceRoots`. Opening only `examples` can cause diagram sources to appear instead. If this also occurs with a normally installed extension, the AsciiDoc extension needs a fix to allow contributed resource directories.
+
+Source maps enable debugging the extension host using the TypeScript sources. After editing code, stop debugging and press F5 again to rebuild. Inspect browser-side code in `src/preview.ts` using `Developer: Open Webview Developer Tools` in the development window.
 
 ## Feedback
 

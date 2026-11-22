@@ -8,7 +8,7 @@ Kroki 互換の diagram ブロックとブロックマクロを認識し、Kroki
 
 ## 機能
 
-- AsciiDoc のプレビューとエクスポートで `asciidoctor-kroki-embedded` を自動登録します。ただし Mermaid 図は対象外です。
+- AsciiDoc のプレビューとエクスポートで `asciidoctor-kroki-embedded` を自動登録します。ただし PlantUML と Mermaid は AsciiDoc 拡張が描画します。
 - `[plantuml]`、`[vega]`、`[wavedrom]`、`[graphviz]` など、パッケージが扱う Kroki 形式の diagram ブロックをサポートします。
 - `plantuml::diagrams/sequence.puml[]` のようなローカル diagram ブロックマクロをサポートします。
 - リモート diagram マクロ、絶対パス、文書ディレクトリ外へのパストラバーサルは、元パッケージ側で無効化されます。
@@ -58,6 +58,27 @@ digraph G {
 plantuml::diagrams/sequence.puml[]
 ```
 
+## diagram の描画分担
+
+| ダイアグラム | 対応状況 |
+| --- | --- |
+| Graphviz（`graphviz`、`dot`） | ローカル描画に対応 |
+| Nomnoml（`nomnoml`） | ローカル描画に対応 |
+| Vega / Vega-Lite（`vega`、`vegalite`） | ローカル描画に対応。外部データ・画像 URL は読み込みません |
+| WaveDrom（`wavedrom`） | ローカル描画に対応 |
+| Bytefield（`bytefield`） | ローカル描画に対応 |
+| Pikchr（`pikchr`） | ローカル描画に対応 |
+| Lini（`lini`） | ローカル描画に対応。画像ノードは拒否します |
+| PlantUML / Mermaid（`plantuml`、`mermaid`） | AsciiDoc 拡張が描画 |
+| D2（`d2`） | **非サポート。レンダラー対象外** |
+| `c4plantuml`、`seqdiag`、`blockdiag`、`erd`、`ditaa`、`svgbob`、`excalidraw` など、その他の形式 | ローカル描画は未対応 |
+
+WebAssembly を使用する同梱レンダラーには、WebAssembly の実行を許可するプレビューホストが必要です。Lini の WASM はプレビューバンドルに埋め込み、外部ダウンロードは行いません。
+
+D2 は、同梱レイアウトエンジンが blob Web Worker に加えて `script-src 'unsafe-eval'` を必要とするため、非サポートとしています。本拡張はこれらの CSP 許可を要求せず、D2 エンジンも読み込みません。
+
+D2 を含む未対応形式のブロックは登録せず、Asciidoctor.js 標準のソース表示を使用します。Kroki サーバーへの送信も行いません。PlantUML と Mermaid は本拡張でブロック・マクロを登録せず、描画処理にも介入しません。Vega/Vega-Lite のデータは文書内に埋め込んでください。
+
 ## 設定
 
 VS Code の設定から拡張の動作を変更できます。
@@ -65,7 +86,7 @@ VS Code の設定から拡張の動作を変更できます。
 | 設定 | 既定値 | 説明 |
 | --- | --- | --- |
 | `asciidoctorKrokiEmbedded.defaultFormat` | `svg` | `asciidoctor-kroki-embedded` に渡す既定の diagram format です。 |
-| `asciidoctorKrokiEmbedded.diagramNames` | `[]` | 登録する diagram ブロック名とマクロ名です。空の場合は Mermaid を除いたパッケージの既定値を使用します。Mermaid は常に除外されます。 |
+| `asciidoctorKrokiEmbedded.diagramNames` | `[]` | 登録する diagram ブロック名とマクロ名です。空の場合は パッケージの既定値のうちローカル描画に対応する形式を使用します。未対応形式と PlantUML、Mermaid は常に除外されます。 |
 
 ### `settings.json` の例
 
@@ -93,11 +114,22 @@ VS Code の設定から拡張の動作を変更できます。
 
 ### diagram 構文が認識されない
 
-`asciidoctorKrokiEmbedded.diagramNames` を確認してください。空の場合は Mermaid を除いたパッケージの既定値を使用します。値が入っている場合は、指定した diagram 名だけが登録されますが、Mermaid は常に除外されます。
+`asciidoctorKrokiEmbedded.diagramNames` を確認してください。空の場合は パッケージの既定値のうちローカル描画に対応する形式を使用します。値が入っている場合は、指定した diagram 名だけが登録されますが、未対応形式と PlantUML、Mermaid は常に除外されます。
 
 ### ローカル diagram マクロが失敗する
 
 `plantuml::diagrams/sequence.puml[]` のように、AsciiDoc 文書ディレクトリ配下の相対パスを指定してください。リモート URL、絶対パス、文書ディレクトリ外へのパスは意図的に拒否されます。
+
+## 開発・デバッグ
+
+1. このリポジトリを VS Code で開き、ターミナルで `npm ci` を実行します。
+2. 上記「必要な拡張」を満たす AsciiDoc 拡張をインストールして有効化します。WSL / SSH / Dev Container を使う場合は、接続先にもインストールしてください。
+3. `src/extension.ts` にブレークポイントを設定し、実行とデバッグで `Run Extension` を選んで **F5** を押します。型チェックとビルドの後、Extension Development Host が開きます。
+4. 起動したウィンドウで `examples/test.adoc` を開き、`Asciidoctor Kroki Embedded: Open Preview` を実行します。
+
+デバッグ起動では専用の `.vscode/debug.code-workspace` を別ウィンドウで開き、その中にリポジトリ全体を含めます。編集中のフォルダーとワークスペースの識別子を分けることで、起動先の競合を避けます。利用中の AsciiDoc 拡張が追加拡張のリソースディレクトリを Webview の `localResourceRoots` に含めない場合でも、本拡張の `dist` がワークスペース内にあることで CSS・JavaScript を読み込めます。`examples` だけをワークスペースとして開くと、この問題により diagram のソースが表示されることがあります。通常インストール時にも発生する場合は、AsciiDoc 拡張側で追加拡張のリソースを許可する修正が必要です。
+
+TypeScript のソースマップを使って拡張ホスト側をデバッグできます。コードを変更したらデバッグを停止して F5 で起動し直すと、再ビルドされます。`src/preview.ts` のブラウザー側処理は、起動したウィンドウの `Developer: Open Webview Developer Tools` で確認してください。
 
 ## フィードバック
 

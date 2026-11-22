@@ -1,0 +1,22 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "check extension",
+      "type": "npm",
+      "script": "check",
+      "problemMatcher": "$tsc"
+    },
+    {
+      "label": "build extension",
+      "type": "npm",
+      "script": "build",
+      "dependsOn": ["check extension"],
+      "problemMatcher": [],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    }
+  ]
+}
