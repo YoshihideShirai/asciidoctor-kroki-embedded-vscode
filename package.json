@@ -16,8 +16,7 @@
     "Other"
   ],
   "activationEvents": [
-    "onLanguage:asciidoc",
-    "onCommand:asciidoctorKrokiEmbedded.showPreview"
+    "onLanguage:asciidoc"
   ],
   "main": "./dist/extension.js",
   "contributes": {
